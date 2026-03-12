@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+from fastapi.responses import HTMLResponse
+import markdown
 from app.claude_client import analyze_code_with_claude
 
 app = FastAPI()
@@ -18,4 +20,5 @@ def health_check():
 @app.post("/analyze")
 def analyze_code(request: CodeRequest):
     result = analyze_code_with_claude(request.code)
-    return {"analysis": result}
+    html_output = markdown.markdown(result)
+    return HTMLResponse(content=html_output)
